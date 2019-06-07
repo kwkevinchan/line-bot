@@ -11,6 +11,9 @@ RUN composer install \
 
 FROM php:fpm-alpine as php
 
+RUN apk add --no-cache shadow
+RUN usermod -u 1000 www-data
+
 ENV USE_CP=false \
     SERVICE_PATH=/var/www/line-bot
 WORKDIR /
