@@ -1,4 +1,4 @@
-FROM compsoer as vender
+FROM composer as vender
 
 ADD ./ /app
 WORKDIR /app/
@@ -11,7 +11,9 @@ RUN composer install \
 
 FROM php:fpm-alpine as php
 
-ENV USE_CP=false
+ENV USE_CP=false \
+    SERVICE_PATH=/var/www/line-bot
+WORKDIR /
 
 COPY --from=vender /app /app/
 
