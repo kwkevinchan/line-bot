@@ -12,5 +12,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('line/push', 'LineBotController@push');
-Route::get('line/webhook', 'LineBotController@webhook');
+Route::get('line/test', 'LineBotController@pushMessage');
+// Route::post('line/webhook', 'LineBotController@webhook');
