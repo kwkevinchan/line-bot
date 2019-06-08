@@ -9,7 +9,7 @@ RUN composer install \
     --no-suggest \
     --ignore-platform-reqs
 
-FROM php:fpm-alpine as php
+FROM php:7.1-fpm-alpine3.8 as php
 
 RUN apk add --no-cache shadow
 RUN usermod -u 1000 www-data
