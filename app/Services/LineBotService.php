@@ -5,6 +5,7 @@ namespace App\Services;
 use LINE\LINEBot;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use App\Entities\User;
 
 class LineBotService
 {
@@ -50,5 +51,24 @@ class LineBotService
     public function getMessageContext()
     {
         return $this->messageGetText;
+    }
+
+    public function messageGetUserId()
+    {
+        return $this->messageGetUserId;
+    }
+
+    public function getUserProfile($userLineId)
+    {
+        return $this->lineBot->getProfile($userLineId);
+    }
+
+    public function checkNewUser()
+    {
+        $user = User::where('line_id', $this->messageGetUserId)->first();
+        if ($user == null){
+            $userProfile = $this->lineBot->getProfile($this->messageGetUserId);
+            User::create('line_id', $this->messageGetUserId);
+        }
     }
 }
