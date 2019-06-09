@@ -45,7 +45,10 @@ class LineBotService
             || $this->messageGetText === null
         ) {
             $this->replyMessage('對不起, 目前不支援此類型訊息');
+            throw new \Exception('message body error: ' . json_encode($messageJson));
         }
+
+        $this->checkNewUser();
     }
 
     public function getMessageContext()
@@ -65,10 +68,19 @@ class LineBotService
 
     public function checkNewUser()
     {
-        $user = User::where('line_id', $this->messageGetUserId)->first();
-        if ($user == null){
-            $userProfile = $this->lineBot->getProfile($this->messageGetUserId);
-            User::create('line_id', $this->messageGetUserId);
+        try {
+            $user = User::where('line_id', $this->messageGetUserId)->first();
+            if ($user == null){
+                $userProfile = $this->lineBot->getProfile($this->messageGetUserId)->getJSONDecodedBody();
+                User::create([
+                    'name' => $userProfile['displayName'],
+                    'line_id' => $this->messageGetUserId
+                ]);
+    
+                $this->pushMessage($this->messageGetUserId, "歡迎您, 新的使用者:\n" . $userProfile['displayName']);
+            }
+        } catch ( \Exception $e ) {
+            throw new Exception($e->getMessage());
         }
     }
 }
