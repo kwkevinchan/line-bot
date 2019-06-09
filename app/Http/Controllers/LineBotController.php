@@ -21,8 +21,12 @@ class LineBotController extends Controller
 
     public function webhook(Request $request)
     {
-        var_dump($request->toArray());
-        Storage::disk('public')->append('line.log', $request->toArray());
+        $lineWebhookJson = $request->json()->all()['events'][0];
+        Storage::disk('public')->append('line.log', $lineWebhookJson['message']['text']);
+        $httpClient = new CurlHTTPClient(env('LINEBOT_CHANNEL_TOKEN'));
+        $lineBot = new LINEBot($httpClient, ['channelSecret' => env('LINEBOT_CHANNEL_SECRET')]);
+        $messageBuild = new TextMessageBuilder('Hello, 你傳送的訊息是:' . $lineWebhookJson['message']['text']);
+        $lineBot->replyMessage($lineWebhookJson['replyToken'], $messageBuild);
         return response('good', 200)->withHeaders([
             "Access-Control-Allow-Origin" => "*"
         ]);
