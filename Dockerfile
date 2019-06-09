@@ -12,6 +12,7 @@ RUN composer install \
 FROM php:7.1-fpm-alpine3.8 as php
 
 RUN apk add --no-cache shadow
+RUN docker-php-ext-install pdo pdo_mysql
 RUN usermod -u 1000 www-data
 
 ENV USE_CP=false \
