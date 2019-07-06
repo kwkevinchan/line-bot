@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\LineBotService;
+use App\Contracts\MessagePaserContract;
 
 class LineBotController extends Controller
 {
@@ -18,9 +19,10 @@ class LineBotController extends Controller
     {
         $lineBot = new LineBotService();
         $lineWebhookJson = $request->json()->all();
-        $lineBot->messageJsonParse($lineWebhookJson);
-        $message = $lineBot->getMessageContext();
-        $lineBot->replyMessage("Hello, 你輸入的訊息是: \n" . $message);
+        $message = $lineBot->messageJsonParse($lineWebhookJson);
+        $contract = new MessagePaserContract($message['user'], $message['message']);
+        $returnMessage = $contract->paserMessage();
+        $lineBot->replyMessage($returnMessage);
         return response('good', 200)->withHeaders([
             "Access-Control-Allow-Origin" => "*"
         ]);

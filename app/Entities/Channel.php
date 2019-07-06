@@ -4,14 +4,12 @@ namespace App\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 
-class User extends Model
+class Channel extends Model
 {
     protected $fillable = [
         'name',
-        'email',
-        'line_id',
-        'permission',
     ];
+    public $timestamps = false;
 
     public function channels()
     {
