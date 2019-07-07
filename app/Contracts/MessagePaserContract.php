@@ -48,9 +48,13 @@ class MessagePaserContract
 
             case '我的頻道':
                 $channels = $this->messageService->getUserChannels();
-                $returnMessage = "您所訂閱的頻道為:\n";
-                foreach($channels as $channel) {
-                    $returnMessage .= $channel->name . "\n";
+                if($channels->isNotEmpty()){
+                    $returnMessage = "您所訂閱的頻道為:\n";
+                    foreach($channels as $channel) {
+                        $returnMessage .= $channel->name . "\n";
+                    }
+                } else {
+                    $returnMessage = "您尚未訂閱任何頻道";
                 }
                 break;
 

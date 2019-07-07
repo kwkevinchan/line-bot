@@ -81,7 +81,7 @@ class LineBotService
             if ($user == null){
                 $user = $this->createUser($lineId);
             }
-            Redis::set($lineId, serialize($product));
+            Redis::set($lineId, serialize($user));
         } else {
             $user = unserialize($user);
         }
