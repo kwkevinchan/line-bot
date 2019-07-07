@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Redis;
+
 use LINE\LINEBot;
 use LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -72,29 +74,38 @@ class LineBotService
 
     public function checkUser()
     {
-        try {
-            $user = User::where('line_id', $this->messageGetUserId)->first();
+        $lineId = $this->messageGetUserId;
+        $user = Redis::get($lineId);
+        if($user === null){
+            $user = User::where('line_id', $lineId)->first();
             if ($user == null){
-                $userProfile = $this->lineBot->getProfile($this->messageGetUserId)->getJSONDecodedBody();
-                $user = User::create([
-                    'name' => $userProfile['displayName'],
-                    'line_id' => $this->messageGetUserId
-                ]);
-
-                $this->pushMessage($this->messageGetUserId, "歡迎您, 新的使用者:\n\n" . $userProfile['displayName'] . "\n
-                    '我的Email':可查詢您目前的Email\n\n
-                    '更新Email:{Email}':可建立您的Email資訊\n\n
-                    '頻道清單':可查詢目前支援的新聞頻道\n\n
-                    '我的頻道':可查詢目前訂閱的新聞頻道\n\n
-                    '訂閱{頻道名}':可以訂閱選定的新聞頻道\n\n
-                    '取消訂閱{頻道名}':可以取消訂閱的頻道\n\n
-                    '查詢頻道訂閱人{頻道ID}':可以查詢頻道的訂閱人\n\n
-                    '幫助':可查詢本提示");
+                $user = $this->createUser($lineId);
             }
-
-            return $user;
-        } catch ( \Exception $e ) {
-            throw new \Exception($e->getMessage());
+            Redis::set($lineId, serialize($product));
+        } else {
+            $user = unserialize($user);
         }
+        return $user;
+    }
+
+    public function createUser($lineId)
+    {
+        $userProfile = $this->lineBot->getProfile($lineId)->getJSONDecodedBody();
+        $user = User::create([
+            'name' => $userProfile['displayName'],
+            'line_id' => $this->messageGetUserId
+        ]);
+
+        $this->pushMessage($this->messageGetUserId, "歡迎您, 新的使用者:\n\n" . $userProfile['displayName'] . "\n
+            '我的Email':可查詢您目前的Email\n\n
+            '更新Email:{Email}':可建立您的Email資訊\n\n
+            '頻道清單':可查詢目前支援的新聞頻道\n\n
+            '我的頻道':可查詢目前訂閱的新聞頻道\n\n
+            '訂閱{頻道名}':可以訂閱選定的新聞頻道\n\n
+            '取消訂閱{頻道名}':可以取消訂閱的頻道\n\n
+            '查詢頻道訂閱人{頻道ID}':可以查詢頻道的訂閱人\n\n
+            '幫助':可查詢本提示");
+
+        return $user;
     }
 }

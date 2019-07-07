@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Entities\User;
 use App\Entities\Channel;
+use Illuminate\Support\Facades\Redis;
 
 class MessageService
 {
@@ -21,6 +22,7 @@ class MessageService
     {
         $this->user->email = $email;
         $this->user->save();
+        Redis::del($this->user->line_id);
         return $this->user->email;
     }
 
@@ -37,6 +39,7 @@ class MessageService
     public function setUserChannel($channel)
     {
         $channels = array_map('trim', explode(',', $channel));
+        Redis::del($this->user->line_id);
         $channelIds = Channel::whereIn('name', $channels)->get()->pluck('id');
         if ($channelIds->isNotEmpty()) {
             $channelIds = $channelIds->merge($this->user->channels->pluck('id'));
@@ -50,6 +53,7 @@ class MessageService
     public function unsetUserChannel($channel)
     {
         $channels = array_map('trim', explode(',', $channel));
+        Redis::del($this->user->line_id);
         $channelIds = Channel::whereIn('name', $channels)->get()->pluck('id');
         if ($channelIds->isNotEmpty()) {
             $this->user->channels()->detach($channelIds);

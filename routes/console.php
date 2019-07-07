@@ -2,6 +2,7 @@
 
 use App\Entities\User;
 use App\Entities\Channel;
+use Illuminate\Support\Facades\Redis;
 /*
 |--------------------------------------------------------------------------
 | Console Routes
@@ -14,6 +15,6 @@ use App\Entities\Channel;
 */
 
 Artisan::command('test', function () {
-    $channels = Channel::where('id', 1)->first();
-    dd(($channels->users)[0]->name);
+    $user = Redis::get('gg');
+    dd($user);
 });

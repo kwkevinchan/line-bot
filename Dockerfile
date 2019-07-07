@@ -11,10 +11,11 @@ RUN composer install \
 
 FROM php:7.1-fpm-alpine3.8 as php
 
-RUN apk add --no-cache shadow
+RUN apk add --no-cache shadow $PHPIZE_DEPS
 RUN docker-php-ext-install pdo pdo_mysql
-RUN pecl install -o -f redis && \
-    docker-php-ext-enable redis
+
+RUN pecl install redis
+RUN docker-php-ext-enable redis
 
 RUN usermod -u 1000 www-data
 
