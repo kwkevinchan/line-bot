@@ -28,6 +28,7 @@ class MessagePaserContract
                     "'我的頻道':可查詢目前訂閱的新聞頻道\n\n" .
                     "'訂閱{頻道名}':可以訂閱選定的新聞頻道\n\n" .
                     "'取消訂閱{頻道名}':可以取消訂閱的頻道\n\n" .
+                    "'查詢頻道訂閱人{頻道ID}':可以查詢頻道的訂閱人\n\n" .
                     "'幫助':可查詢本提示\n\n"
                 ;
                 break;
@@ -41,7 +42,7 @@ class MessagePaserContract
                 $channels = $this->messageService->getAllChannels();
                 $returnMessage = "現在支援的頻道為:\n";
                 foreach($channels as $channel) {
-                    $returnMessage .= $channel->name . "\n";
+                    $returnMessage .= $channel->id . ". " . $channel->name . "\n";
                 }
                 break;
 
@@ -65,7 +66,7 @@ class MessagePaserContract
                 if ($success) {
                     $returnMessage = "您已訂閱:\n" . $channel;
                 } else {
-                    $returnMessage = "查無此頻道";
+                    $returnMessage = "查無此頻道:\n" . $channel;
                 }
                 break;
 
@@ -76,6 +77,23 @@ class MessagePaserContract
                     $returnMessage = "您已取消訂閱:\n" . $channel;
                 } else {
                     $returnMessage = "您並未訂閱或查無此頻道";
+                }
+                break;
+
+            case (preg_match('#^查詢頻道訂閱人#', $message) ? true : false):
+                $channel = explode('查詢頻道訂閱人', $message)[1];
+                $returnUser = $this->messageService->showChannelUser($channel);
+                if ($returnUser['success']) {
+                    if ($returnUser['users']->isNotEmpty()){
+                        $returnMessage = "訂閱人姓名:\n";
+                        foreach($returnUser['users'] as $user) {
+                            $returnMessage .= $user->name . "\n";
+                        }
+                    } else {
+                        $returnMessage = "此頻道無人訂閱";
+                    }
+                } else {
+                    $returnMessage = "查無此頻道";
                 }
                 break;
 

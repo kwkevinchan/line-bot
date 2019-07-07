@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-
+use App\Entities\User;
+use App\Entities\Channel;
 /*
 |--------------------------------------------------------------------------
 | Console Routes
@@ -13,6 +13,7 @@ use Illuminate\Foundation\Inspiring;
 |
 */
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->describe('Display an inspiring quote');
+Artisan::command('test', function () {
+    $channels = Channel::where('id', 1)->first();
+    dd(($channels->users)[0]->name);
+});

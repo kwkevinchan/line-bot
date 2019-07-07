@@ -11,9 +11,9 @@ class Channel extends Model
     ];
     public $timestamps = false;
 
-    public function channels()
+    public function users()
     {
-        return $this->belongsToMany(Channel::class, 'user_channels');
+        return $this->belongsToMany(User::class, 'user_channels');
     }
 
 }

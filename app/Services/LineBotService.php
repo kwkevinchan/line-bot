@@ -81,13 +81,14 @@ class LineBotService
                     'line_id' => $this->messageGetUserId
                 ]);
 
-                $this->pushMessage($this->messageGetUserId, "歡迎您, 新的使用者:\n" . $userProfile['displayName'] . "\n
-                    '我的Email':可查詢您目前的Email\n
-                    '更新Email:{Email}':可建立您的Email資訊\n
-                    '頻道清單':可查詢目前支援的新聞頻道\n
-                    '我的頻道':可查詢目前訂閱的新聞頻道\n
-                    '訂閱{頻道名}':可以訂閱選定的新聞頻道\n
-                    '取消訂閱{頻道名}':可以取消訂閱的頻道\n
+                $this->pushMessage($this->messageGetUserId, "歡迎您, 新的使用者:\n\n" . $userProfile['displayName'] . "\n
+                    '我的Email':可查詢您目前的Email\n\n
+                    '更新Email:{Email}':可建立您的Email資訊\n\n
+                    '頻道清單':可查詢目前支援的新聞頻道\n\n
+                    '我的頻道':可查詢目前訂閱的新聞頻道\n\n
+                    '訂閱{頻道名}':可以訂閱選定的新聞頻道\n\n
+                    '取消訂閱{頻道名}':可以取消訂閱的頻道\n\n
+                    '查詢頻道訂閱人{頻道ID}':可以查詢頻道的訂閱人\n\n
                     '幫助':可查詢本提示");
             }
 

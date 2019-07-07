@@ -28,4 +28,49 @@ class MessageService
     {
         return Channel::get();
     }
+
+    public function getUserChannels()
+    {
+        return $this->user->channels;
+    }
+
+    public function setUserChannel($channel)
+    {
+        $channels = array_map('trim', explode(',', $channel));
+        $channelIds = Channel::whereIn('name', $channels)->get()->pluck('id');
+        if ($channelIds->isNotEmpty()) {
+            $channelIds = $channelIds->merge($this->user->channels->pluck('id'));
+            $this->user->channels()->sync($channelIds);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function unsetUserChannel($channel)
+    {
+        $channels = array_map('trim', explode(',', $channel));
+        $channelIds = Channel::whereIn('name', $channels)->get()->pluck('id');
+        if ($channelIds->isNotEmpty()) {
+            $this->user->channels()->detach($channelIds);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function showChannelUser($channelId)
+    {
+        $channel = Channel::where('id', (int) $channelId)->first();
+        if ($channel === null){
+            return ['success' => false];
+        } else {
+            return [
+                'success' => true,
+                'users' => $channel->users,
+            ];
+        }
+
+    }
+
 }
